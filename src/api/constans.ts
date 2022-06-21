@@ -33,6 +33,8 @@ export const ApiPath = {
   Menus: {
     List: 'carta/getCartas',
     ListByRestaurant: 'carta/getCartasPorRestaurante',
+    Create: 'carta/createCarta',
+    Delete: 'carta/deleteCarta'
   },
   Restaurants: {
     List: 'restaurante/getRestaurantes',

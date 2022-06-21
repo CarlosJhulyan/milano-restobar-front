@@ -14,6 +14,7 @@ type TypeTitleSystem =
   | 'Registro'
   | 'Usuario'
   | 'Pedido'
+  | 'Carta'
   | 'Administrador';
 
 
