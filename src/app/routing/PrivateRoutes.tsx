@@ -7,6 +7,8 @@ import {MenuTestPage} from '../pages/MenuTestPage'
 import {getCSSVariableValue} from '../../_metronic/assets/ts/_utils'
 import { DashboardAdmin } from '../modules/admin/DashboardAdmin'
 import { useAuth } from '../modules/auth'
+import PlaceOrderPage from "../modules/users/ordersCajero/PlaceOrder/PlaceOrderPage";
+import OrdersPage from "../modules/users/ordersCajero/OrdersList/OrdersPage";
 
 const PrivateRoutes = () => {
   const BuilderPageWrapper = lazy(() => import('../pages/layout-builder/BuilderPageWrapper'))
@@ -47,12 +49,20 @@ const PrivateRoutes = () => {
         )
         }
         
-        {currentUser && (
+        {(currentUser && currentUser.tipo_usuario == 'M') && (
           <>
             <Route path='tablero' element={<DashboardAdmin />} />
             <Route path='platos' element={<PlatesPage />} />
             <Route path='realizarPedido' element={<MakeOrderPage />} />
             <Route path='misPedidos' element={<MyOrdersPage />} />
+          </>
+        )}
+
+        {(currentUser && currentUser.tipo_usuario == 'O') && (
+          <>
+            <Route path='tablero' element={<DashboardAdmin />} />
+            <Route path='realizarPedido' element={<PlaceOrderPage />} />
+            <Route path='pedidos' element={<OrdersPage />} />
           </>
         )}
         

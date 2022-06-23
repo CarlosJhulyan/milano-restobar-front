@@ -54,6 +54,11 @@ export type OrderHeader = {
   fecha_creacion?: string
   fecha_edicion?: string,
   vta_mesa_id_vta_mesa?: string
+  nombre?: string
+  apellido_paterno?: string
+  vta_numero_mesa?: string
+  num_vta_pedido?: string
+  fecha_crea?: string
 }
 
 export type OrderDetail = {
@@ -62,4 +67,24 @@ export type OrderDetail = {
   cantidad?: number
   id_cme_receta?: number
   idvta_pedido_venta_cab?: number
+  vta_ruta_imagen_plato?: string
+  vta_precio?: number
+  vta_desc_plato?: string
+}
+
+export type FormaPagoPedido = {
+  cod_local?: string
+  cod_forma_pago?: string
+  num_ped_vta?: string
+  im_pago?: number
+  tip_moneda?: string
+  val_tip_cambio?: number
+  val_vuelto?: number
+  im_total_pago?: number
+}
+
+export type CoinType = {
+  cod_moneda?: string
+  des_moneda?: string
+  smb_moneda?: string
 }

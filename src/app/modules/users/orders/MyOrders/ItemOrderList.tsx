@@ -17,7 +17,7 @@ const ItemOrderList = ({ order, handleSetItemSelect }: Props) => {
       </td> */}
       <td>
         <span className='text-dark fw-bolder text-hover-primary fs-6'>
-          #{String(order.idvta_pedido_venta_cab).padStart(10, '0')}
+          #{order.num_vta_pedido}
         </span>
       </td>
       <td>

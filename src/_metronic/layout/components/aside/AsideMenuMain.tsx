@@ -170,6 +170,22 @@ export function AsideMenuMain() {
         </>
       )}
 
+      {(!isPageAdmin && currentUser?.tipo_usuario === 'O') && (
+        <>
+          <div className='menu-item'>
+            <div className='menu-content pt-8 pb-2'>
+              <span className='menu-section text-muted text-uppercase fs-8 ls-1'>Pedidos</span>
+            </div>
+          </div>
+          <AsideMenuItem
+            to='/pedidos'
+            icon='/media/icons/duotune/ecommerce/ecm008.svg'
+            title='Pedidos'
+            fontIcon='bi-layers'
+          />
+        </>
+      )}
+
 
       {/* <AsideMenuItemWithSub
         to='/crafted/pages'

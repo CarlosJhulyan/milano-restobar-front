@@ -45,6 +45,12 @@ export const ApiPath = {
   Order: {
     Generate: 'pedido/generarPedido',
     RecentsByUser: 'pedido/getPedidosUsuario',
-    ChangeStatus: 'pedido/updateEstadoPedido'
+    ChangeStatus: 'pedido/updateEstadoPedido',
+    GetDetailsComplete: 'pedido/getPedidosDetallesComp',
+    GetFulfilled: 'pedido/getPedidosAtendidos',
+    GeneratePaymentForm: 'pedido/generarFormaPagoPedido'
+  },
+  Global: {
+    GetCoinsType: '/getFormaPago'
   }
 }

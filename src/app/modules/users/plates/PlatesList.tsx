@@ -1,18 +1,18 @@
 import {useEffect, useMemo, useState} from 'react'
-import { httpClient } from '../../../../api/api';
-import { ApiPath } from '../../../../api/constans';
+import { httpClient } from '../../../../api/api'
+import { ApiPath } from '../../../../api/constans'
 import { KTCard, KTCardBody } from '../../../../_metronic/helpers'
-import { getImageUrlBackend } from '../../../../_metronic/helpers/getImageUrlBackend';
-import { Plate } from './constants';
+import { getImageUrlBackend } from '../../../../_metronic/helpers/getImageUrlBackend'
+import { Plate } from './constants'
 
-import { PlateCard } from './PlateCard';
+import { PlateCard } from './PlateCard'
 
 const PlatesList = () => {
-  const [data, setData] = useState<Array<Plate>>([]);
+  const [data, setData] = useState<Array<Plate>>([])
 
   const getListPlates = async () => {
-    const { data: { data } } = await httpClient.get(ApiPath.Plates.List);
-    setData(data);
+    const { data: { data } } = await httpClient.get(ApiPath.Plates.List)
+    setData(data)
   }
 
   useEffect(() => {
