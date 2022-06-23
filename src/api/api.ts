@@ -13,3 +13,11 @@ export const httpClient = axios.create({
     'Content-Type': 'application/json'
   }
 });
+
+export const httpClientFormData = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'multipart/formData',
+  },
+})
+

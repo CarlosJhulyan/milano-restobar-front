@@ -57,7 +57,7 @@ const rolesTableColumn: ReadonlyArray<Column<User>> = [
     Cell: ({...props}) => (
       <div>
         <div className='d-flex justify-content-end flex-shrink-0'>
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+          <button onClick={()=>props.handleShow()} className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
             <KTSVG path='/media/icons/duotune/art/art005.svg' className='svg-icon-3' />
           </button>
         </div>

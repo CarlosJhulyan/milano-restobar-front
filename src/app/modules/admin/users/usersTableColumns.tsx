@@ -1,17 +1,16 @@
 import clsx from 'clsx'
-import { PropsWithChildren } from 'react'
+import {PropsWithChildren, useState} from 'react'
 import {Column, HeaderProps} from 'react-table'
-import { KTSVG } from '../../../../_metronic/helpers'
-import { getImageUrlBackend } from '../../../../_metronic/helpers/getImageUrlBackend'
-import { UserActionsCell } from '../../apps/user-management/users-list/table/columns/UserActionsCell'
-import { UserCustomHeader } from '../../apps/user-management/users-list/table/columns/UserCustomHeader'
-import { UserInfoCell } from '../../apps/user-management/users-list/table/columns/UserInfoCell'
-import { UserLastLoginCell } from '../../apps/user-management/users-list/table/columns/UserLastLoginCell'
-import { UserSelectionCell } from '../../apps/user-management/users-list/table/columns/UserSelectionCell'
-import { UserSelectionHeader } from '../../apps/user-management/users-list/table/columns/UserSelectionHeader'
-import { UserTwoStepsCell } from '../../apps/user-management/users-list/table/columns/UserTwoStepsCell'
-import { User } from './constants'
-
+import {KTSVG} from '../../../../_metronic/helpers'
+import {getImageUrlBackend} from '../../../../_metronic/helpers/getImageUrlBackend'
+import {UserActionsCell} from '../../apps/user-management/users-list/table/columns/UserActionsCell'
+import {UserCustomHeader} from '../../apps/user-management/users-list/table/columns/UserCustomHeader'
+import {UserInfoCell} from '../../apps/user-management/users-list/table/columns/UserInfoCell'
+import {UserLastLoginCell} from '../../apps/user-management/users-list/table/columns/UserLastLoginCell'
+import {UserSelectionCell} from '../../apps/user-management/users-list/table/columns/UserSelectionCell'
+import {UserSelectionHeader} from '../../apps/user-management/users-list/table/columns/UserSelectionHeader'
+import {UserTwoStepsCell} from '../../apps/user-management/users-list/table/columns/UserTwoStepsCell'
+import {User} from './constants'
 
 const usersTableColumn: ReadonlyArray<Column<User>> = [
   // {
@@ -28,16 +27,14 @@ const usersTableColumn: ReadonlyArray<Column<User>> = [
           <a href='#'>
             {props.data[props.row.index].avatar ? (
               <div className='symbol-label'>
-                <img src={getImageUrlBackend(`/avatars/${props.data[props.row.index].avatar}`)} alt={props.data[props.row.index].nombre} className='w-100' />
+                <img
+                  src={getImageUrlBackend(`/avatars/${props.data[props.row.index].avatar}`)}
+                  alt={props.data[props.row.index].nombre}
+                  className='w-100'
+                />
               </div>
             ) : (
-              <div
-                className={clsx(
-                  'symbol-label fs-3',
-                  `bg-light-primary`,
-                  `text-primary`
-                )}
-              >
+              <div className={clsx('symbol-label fs-3', `bg-light-primary`, `text-primary`)}>
                 {props.data[props.row.index].nombre[0]}
               </div>
             )}
@@ -50,19 +47,20 @@ const usersTableColumn: ReadonlyArray<Column<User>> = [
           <span>{props.data[props.row.index].correo}</span>
         </div>
       </div>
-    )
+    ),
   },
   {
-    Header: (props) => (
-      <HeaderTable tableProps={props} title='Apellidos' className='min-w-125px' />
-    ),
+    Header: (props) => <HeaderTable tableProps={props} title='Apellidos' className='min-w-125px' />,
     id: 'apellidos',
-    Cell: ({...props}) => <span>{props.data[props.row.index].apellido_paterno} {props.data[props.row.index].apellido_materno}</span>,
+    Cell: ({...props}) => (
+      <span>
+        {props.data[props.row.index].apellido_paterno}{' '}
+        {props.data[props.row.index].apellido_materno}
+      </span>
+    ),
   },
   {
-    Header: (props) => (
-      <HeaderTable tableProps={props} title='Celular' className='min-w-125px' />
-    ),
+    Header: (props) => <HeaderTable tableProps={props} title='Celular' className='min-w-125px' />,
     id: 'celular',
     Cell: ({...props}) => <span>+51 {props.data[props.row.index].celular}</span>,
   },
@@ -78,12 +76,20 @@ const usersTableColumn: ReadonlyArray<Column<User>> = [
     id: 'role',
     Cell: ({...props}) => (
       <div className='text-end'>
-        {props.data[props.row.index].tipo_usuario === 'M' && <span className='badge badge-light-success fw-bold me-1'>Mozo</span>}
-        {props.data[props.row.index].tipo_usuario === 'C' && <span className='badge badge-light-info fw-bold me-1'>Cocinero</span>}
-        {props.data[props.row.index].tipo_usuario === 'O' && <span className='badge badge-light-warning fw-bold me-1'>Cajero</span>}
-        {!props.data[props.row.index].tipo_usuario && <span className='badge badge-light-danger fw-bold me-1'>Sin asignar</span>}
+        {props.data[props.row.index].tipo_usuario === 'M' && (
+          <span className='badge badge-light-success fw-bold me-1'>Mozo</span>
+        )}
+        {props.data[props.row.index].tipo_usuario === 'C' && (
+          <span className='badge badge-light-info fw-bold me-1'>Cocinero</span>
+        )}
+        {props.data[props.row.index].tipo_usuario === 'O' && (
+          <span className='badge badge-light-warning fw-bold me-1'>Cajero</span>
+        )}
+        {!props.data[props.row.index].tipo_usuario && (
+          <span className='badge badge-light-danger fw-bold me-1'>Sin asignar</span>
+        )}
       </div>
-    )
+    ),
   },
   {
     Header: (props) => (
@@ -100,16 +106,17 @@ const usersTableColumn: ReadonlyArray<Column<User>> = [
               className='svg-icon-3'
             />
           </a> */}
-          <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+          <a
+            onClick={() => props.editRow(props.data[props.row.index])}
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
           >
             <KTSVG path='/media/icons/duotune/art/art005.svg' className='svg-icon-3' />
           </a>
-          <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+          <a
+            onClick={() => props.deleteRow(props.data[props.row.index])}
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
           >
-            <KTSVG
-              path='/media/icons/duotune/general/gen027.svg'
-              className='svg-icon-3'
-            />
+            <KTSVG path='/media/icons/duotune/general/gen027.svg' className='svg-icon-3' />
           </a>
         </div>
       </div>
@@ -123,19 +130,19 @@ type PropsHeader = {
   tableProps: PropsWithChildren<HeaderProps<User>>
 }
 
-const HeaderTable = ({ tableProps, title, className }: PropsHeader) => (
+const HeaderTable = ({tableProps, title, className}: PropsHeader) => (
   <>
     <th
-        {...tableProps.column.getHeaderProps()}
-        className={clsx(
-          className,
-          // isSelectedForSorting && order !== undefined && `table-sort-${order}`
-        )}
-        style={{cursor: 'pointer'}}
-        // onClick={sortColumn}
-      >
-        {title}
-      </th>
+      {...tableProps.column.getHeaderProps()}
+      className={clsx(
+        className
+        // isSelectedForSorting && order !== undefined && `table-sort-${order}`
+      )}
+      style={{cursor: 'pointer'}}
+      // onClick={sortColumn}
+    >
+      {title}
+    </th>
   </>
 )
 

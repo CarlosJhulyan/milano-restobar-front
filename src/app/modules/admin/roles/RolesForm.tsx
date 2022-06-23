@@ -1,7 +1,7 @@
 import { useFormik } from 'formik'
 import { useState } from 'react'
 import { KTCard, KTCardBody } from '../../../../_metronic/helpers'
-import { Role } from './constats'
+import { Role, User } from './constats'
 import * as Yup from 'yup'
 import { httpClient } from '../../../../api/api'
 import { ApiPath } from '../../../../api/constans'
@@ -10,16 +10,16 @@ const RoleSchema = Yup.object().shape({
   tipo_usuario: Yup.string().required('Seleccione el rol de usuario')
 })
 
-const RolesForm = ({ currentUser }: { currentUser: Role }) => {
-  console.log(currentUser);
-  
+const RolesForm = ({ currentUser }: { currentUser: Role[] }) => {
+  console.log(currentUser, 'data de props');
+
   const [data, setData] = useState<Role>({
     id_cme_usuario: '',
     nombre: '',
     tipo_usuario: ''
   })
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const formik = useFormik<Role>({
     initialValues: data,
@@ -28,16 +28,22 @@ const RolesForm = ({ currentUser }: { currentUser: Role }) => {
   })
 
   const handleSubmit = async (values: Role) => {
+
+    console.log(values, 'valuesss');
+
     setLoading(true)
     try {
       const { data: { success, message } } = await httpClient.patch(ApiPath.Users.UpdateRole, values)
       console.log(message);
-      
+
     } catch (error) {
       console.error(error);
     }
     setLoading(false)
   }
+
+  // console.log(formik.getFieldProps('nombre'));
+
 
   return (
     <KTCard>
@@ -61,13 +67,35 @@ const RolesForm = ({ currentUser }: { currentUser: Role }) => {
               <label className='col-lg-4 col-form-label fw-bold fs-6'>Usuario</label>
 
               <div className='col-lg-8 fv-row'>
-                <input
+
+                <select
+                  className='form-select form-select-solid form-select-lg'
+                  {...formik.getFieldProps('id_cme_usuario')}
+                >
+                  <option value=''>Seleccionar al usuario...</option>
+                  {
+                    currentUser.map(element => {
+
+                      console.log(element, 'element');
+
+                      return (
+                        <option value={element.id_cme_usuario}>{element.nombre}</option>
+
+                      )
+                    })
+                  }
+                  {/* <option value='C'>Cocinero</option>
+                  <option value='O'>Cajero</option>
+                  <option value='M'>Mesero</option> */}
+                </select>
+
+                {/* <input
                   type='text'
                   className='form-control form-control-lg form-control-solid'
                   placeholder='usuario'
-                  disabled
+                  // disabled
                   {...formik.getFieldProps('nombre')}
-                />
+                /> */}
                 {formik.touched.nombre && formik.errors.nombre && (
                   <div className='fv-plugins-message-container'>
                     <div className='fv-help-block'>{formik.errors.nombre}</div>
@@ -87,6 +115,7 @@ const RolesForm = ({ currentUser }: { currentUser: Role }) => {
                   <option value='C'>Cocinero</option>
                   <option value='O'>Cajero</option>
                   <option value='M'>Mesero</option>
+                  <option value='B'>Bartender</option>
                 </select>
                 {formik.touched.tipo_usuario && formik.errors.tipo_usuario && (
                   <div className='fv-plugins-message-container'>
@@ -99,7 +128,7 @@ const RolesForm = ({ currentUser }: { currentUser: Role }) => {
                 <button type='submit' className='btn btn-primary' disabled={loading}>
                   {!loading && 'Guardar'}
                   {loading && (
-                    <span className='indicator-progress' style={{display: 'block'}}>
+                    <span className='indicator-progress' style={{ display: 'block' }}>
                       Guardando...{' '}
                       <span className='spinner-border spinner-border-sm align-middle ms-2'></span>
                     </span>
@@ -114,4 +143,4 @@ const RolesForm = ({ currentUser }: { currentUser: Role }) => {
   )
 }
 
-export {RolesForm}
+export { RolesForm }

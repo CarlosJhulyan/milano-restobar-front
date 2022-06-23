@@ -15,6 +15,8 @@ export const ApiPath = {
     Auth: 'usuario/login',
     List: 'usuario/getUsuarios',
     Create: 'usuario/createUsuario',
+    Update: 'usuario/updateUsuario',
+    Delete: 'usuario/deleteUsuario/',
     UpdateRole: 'usuario/updateRolUsuario',
   },
   Admin: {

@@ -1,15 +1,17 @@
 import {FC, useEffect, useMemo, useState} from 'react'
 import {useTable, ColumnInstance, Row} from 'react-table'
 import {useQueryResponseLoading} from '../../apps/user-management/users-list/core/QueryResponseProvider'
-import { KTCard, KTCardBody, KTSVG } from '../../../../_metronic/helpers'
-import { UsersListPagination } from '../../apps/user-management/users-list/components/pagination/UsersListPagination'
-import { usersTableColumn } from './usersTableColumns'
-import { httpClient } from '../../../../api/api'
-import { ApiPath } from '../../../../api/constans'
+import {KTCard, KTCardBody, KTSVG} from '../../../../_metronic/helpers'
+import {UsersListPagination} from '../../apps/user-management/users-list/components/pagination/UsersListPagination'
+import {usersTableColumn} from './usersTableColumns'
+import {httpClient} from '../../../../api/api'
+import {ApiPath} from '../../../../api/constans'
 import clsx from 'clsx'
-import { ModalUserUpsert } from './ModalUserUpsert'
-import { User } from './constants'
-import { Loading } from '../Loading'
+import {ModalUserUpsert} from './ModalUserUpsert'
+import {User} from './constants'
+import {Loading} from '../Loading'
+import {editorToolbarSettings} from '../../../../_metronic/partials'
+import {openNotification} from '../../../../utils/openNotification'
 
 type PropsColumn = {
   column: ColumnInstance<User>
@@ -17,13 +19,18 @@ type PropsColumn = {
 
 const UsersList = () => {
   const [currentUser, setCurrentUser] = useState<User>({
-    apellido_materno: '',
-    apellido_paterno: '',
-    fecha_nacimiento: '',
     id_cme_usuario: '',
     nombre: '',
-  });
-  const [data, setData] = useState([]);
+    avatar: '',
+    apellido_paterno: '',
+    apellido_materno: '',
+    correo: '',
+    celular: '',
+    fecha_nacimiento: '',
+    direccion: '',
+    dni: '',
+  })
+  const [data, setData] = useState([])
   const isLoading = useQueryResponseLoading()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const columns = useMemo(() => usersTableColumn, [])
@@ -33,8 +40,23 @@ const UsersList = () => {
   })
 
   const getDataUsers = async () => {
-    const { data } = await httpClient.get(ApiPath.Users.List)
-    setData(data.data);
+    const {data} = await httpClient.get(ApiPath.Users.List)
+    setData(data.data)
+  }
+
+  const editRow = async (user: User) => {
+    setIsModalVisible(true)
+    setCurrentUser(user)
+  }
+
+  const deleteRow = async (user: User) => {
+    const {data} = await httpClient.delete(ApiPath.Users.Delete + user.id_cme_usuario)
+    if (data.success) {
+      getDataUsers()
+      openNotification('Usuario', 'success', data.message)
+    } else {
+      openNotification('Usuario', 'danger', data.message)
+    }
   }
 
   useEffect(() => {
@@ -76,10 +98,24 @@ const UsersList = () => {
             {/* end::Export */}
 
             {/* begin::Add user */}
-            <button 
-              type='button' 
-              className='btn btn-primary' 
-              onClick={() => setIsModalVisible(true)}
+            <button
+              type='button'
+              className='btn btn-primary'
+              onClick={() => {
+                setIsModalVisible(true)
+                setCurrentUser({
+                  id_cme_usuario: '',
+                  nombre: '',
+                  avatar: '',
+                  apellido_paterno: '',
+                  apellido_materno: '',
+                  correo: '',
+                  celular: '',
+                  fecha_nacimiento: '',
+                  direccion: '',
+                  dni: '',
+                })
+              }}
             >
               <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
               Nuevo usuario
@@ -116,7 +152,10 @@ const UsersList = () => {
                             {...cell.getCellProps()}
                             className={clsx({'text-end min-w-100px': cell.column.id === 'actions'})}
                           >
-                            {cell.render('Cell')}
+                            {cell.render('Cell', {
+                              editRow: (e: User) => editRow(e),
+                              deleteRow: (e: User) => deleteRow(e),
+                            })}
                           </td>
                         )
                       })}
@@ -140,7 +179,14 @@ const UsersList = () => {
         {isLoading && <Loading />}
       </KTCardBody>
 
-      {isModalVisible && <ModalUserUpsert isUserLoading={false} user={currentUser} setModalVisible={setIsModalVisible} />}
+      {isModalVisible && (
+        <ModalUserUpsert
+          isUserLoading={false}
+          user={currentUser}
+          setModalVisible={setIsModalVisible}
+          getDataUsers={getDataUsers}
+        />
+      )}
     </KTCard>
   )
 }

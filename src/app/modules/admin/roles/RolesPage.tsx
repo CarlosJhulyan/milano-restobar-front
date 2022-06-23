@@ -8,14 +8,14 @@ import { RolesForm } from "./RolesForm"
 import { RolesList } from "./RolesList"
 
 const RolesPage: FC = () => {
-  const [currentUser, setCurrentUser] = useState<Role>({});
+  const [currentUser, setCurrentUser] = useState<Role[]>([]);
 
   return (
     <>
       <PageTitle>Asignar Roles</PageTitle>
       <div className='row gy-5 g-xl-8'>
         <div className='col-xxl-6'>
-          <RolesList />
+          <RolesList setCurrentUser={setCurrentUser} />
         </div>
         <div className='col-xl-6'>
           <RolesForm currentUser={currentUser} />

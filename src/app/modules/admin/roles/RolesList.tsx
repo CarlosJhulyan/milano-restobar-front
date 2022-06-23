@@ -1,29 +1,38 @@
-import {useEffect, useMemo, useState} from 'react'
-import {useTable, ColumnInstance, Row} from 'react-table'
-import {CustomHeaderColumn} from '../../apps/user-management/users-list/table/columns/CustomHeaderColumn'
-import {CustomRow} from '../../apps/user-management/users-list/table/columns/CustomRow'
-import {useQueryResponseLoading} from '../../apps/user-management/users-list/core/QueryResponseProvider'
+import { useEffect, useMemo, useState } from 'react'
+import { useTable, ColumnInstance, Row } from 'react-table'
+import { CustomHeaderColumn } from '../../apps/user-management/users-list/table/columns/CustomHeaderColumn'
+import { CustomRow } from '../../apps/user-management/users-list/table/columns/CustomRow'
+import { useQueryResponseLoading } from '../../apps/user-management/users-list/core/QueryResponseProvider'
 import { KTCard, KTCardBody, KTSVG } from '../../../../_metronic/helpers'
 import { UsersListPagination } from '../../apps/user-management/users-list/components/pagination/UsersListPagination'
 
 import { httpClient } from '../../../../api/api'
 import { ApiPath } from '../../../../api/constans'
 import { rolesTableColumn } from './rolesTableColumns'
-import { User } from './constats'
+import { Role, User } from './constats'
 import { Loading } from '../Loading'
+import { Button, Modal } from 'react-bootstrap'
 
-const RolesList = () => {
+const RolesList = ({ setCurrentUser }: { setCurrentUser: any }) => {
   const [data, setData] = useState([]);
+  const [show, setShow] = useState(false);
   const isLoading = useQueryResponseLoading()
   const columns = useMemo(() => rolesTableColumn, [])
-  const {getTableProps, getTableBodyProps, headers, rows, prepareRow} = useTable({
+  const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable({
     columns,
-    data,
+    data
   })
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const getDataUsers = async () => {
     const { data } = await httpClient.get(ApiPath.Users.List)
+
+    console.log(data.data, 'list from');
+
     setData(data.data);
+    setCurrentUser(data.data)
   }
 
   useEffect(() => {
@@ -44,8 +53,8 @@ const RolesList = () => {
               data-kt-user-table-filter='search'
               className='form-control form-control-solid w-250px ps-14'
               placeholder='Buscar usuario'
-              // value={searchTerm}
-              // onChange={(e) => setSearchTerm(e.target.value)}
+            // value={searchTerm}
+            // onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
@@ -68,7 +77,7 @@ const RolesList = () => {
               {rows.length > 0 ? (
                 rows.map((row: Row<User>, i) => {
                   prepareRow(row)
-                  return <CustomRow row={row} key={`row-${i}-${row.id}`} />
+                  return <CustomRow row={row} key={`row-${i}-${row.id}`} handleShow={handleShow} />
                 })
               ) : (
                 <tr>
@@ -82,6 +91,24 @@ const RolesList = () => {
             </tbody>
           </table>
         </div>
+        {
+          show ?
+            <Modal show={show} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Modal heading</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={handleClose}>
+                  Save Changes
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            : null
+        }
         <UsersListPagination />
         {isLoading && <Loading />}
       </KTCardBody>
@@ -89,4 +116,4 @@ const RolesList = () => {
   )
 }
 
-export {RolesList}
+export { RolesList }

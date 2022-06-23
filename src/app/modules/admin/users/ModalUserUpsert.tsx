@@ -1,17 +1,25 @@
 import {
-  FC, 
+  FC,
+  LegacyRef,
+  useEffect,
+  useRef,
+  useState,
   // useState
 } from 'react'
 import * as Yup from 'yup'
 import {useFormik} from 'formik'
 import clsx from 'clsx'
-import { User } from './constants'
-import { KTSVG, toAbsoluteUrl } from '../../../../_metronic/helpers'
+import {User} from './constants'
+import {KTSVG, toAbsoluteUrl} from '../../../../_metronic/helpers'
+import {addUser, editUser} from './_request'
+import {openNotification} from '../../../../utils/openNotification'
+import {getImageUrlBackend} from '../../../../_metronic/helpers/getImageUrlBackend'
 
 type Props = {
   isUserLoading: boolean
   user: User
   setModalVisible: (flag: boolean) => void
+  getDataUsers: () => void
 }
 
 const editUserSchema = Yup.object().shape({
@@ -32,27 +40,75 @@ const editUserSchema = Yup.object().shape({
     .min(3, 'Mínimo 3 caractéres')
     .max(50, 'Máximo 50 caractéres')
     .required('Apellido materno requerido'),
-  celular: Yup.string()
-    .length(9, 'Número invalido'),
-  dni: Yup.string()
-    .length(8, 'DNI invalido')
-    .required('DNI requerido'),
-  direccion: Yup.string()
-    .min(3, 'Mínimo 3 caractéres')
-    .max(50, 'Máximo 50 caractéres'),
+  celular: Yup.string().length(9, 'Número invalido'),
+  dni: Yup.string().length(8, 'DNI invalido').required('DNI requerido'),
+  direccion: Yup.string().min(3, 'Mínimo 3 caractéres').max(50, 'Máximo 50 caractéres'),
 })
 
-const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
-  const blankImg = toAbsoluteUrl('/media/svg/avatars/blank.svg')
-  const userAvatarImg = toAbsoluteUrl(`/media/${user.avatar}`)
+const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible, getDataUsers}) => {
+  // const blankImg = toAbsoluteUrl('/media/svg/avatars/blank.svg')
+  // const userAvatarImg = toAbsoluteUrl(`/media/${user.avatar}`)
+
+  const [imagenURL, setImagenURL] = useState<string | null>(null)
+  const [imagen, setImagen] = useState<File | null>(null)
+  const [hover, setHover] = useState(false)
+
+  useEffect(() => {
+    if (user && user.avatar) {
+      setImagenURL(getImageUrlBackend(`/avatars/${user.avatar}`))
+    }
+  }, [user])
 
   const formik = useFormik({
     initialValues: user,
     validationSchema: editUserSchema,
     onSubmit: async (values, {setSubmitting}) => {
       setSubmitting(true)
+      try {
+        let data: {success: boolean; message: string}
+        if (values.id_cme_usuario !== '') {
+          const response = await editUser(values, imagen!)
+          console.log(response,'update');
+          
+          data = response.data
+        } else {
+          const response = await addUser(values, imagen!)
+          data = response.data
+        }
+        if (data.success) {
+          getDataUsers()
+          setSubmitting(false)
+          setModalVisible(false)
+          openNotification('Usuario', 'success', data.message)
+        } else {
+          setSubmitting(false)
+          openNotification('Usuario', 'warning', data.message)
+        }
+      } catch (error) {
+        getDataUsers()
+        setSubmitting(false)
+        setModalVisible(false)
+        openNotification('Usuario', 'danger')
+      }
     },
   })
+
+  const handleFile = (event: any) => {
+    setImagenURL(URL.createObjectURL(event.target.files[0]))
+    setImagen(event.target.files[0])
+  }
+
+  function changeBackgroundHover(e: any) {
+    e.target.style.background = 'rgba(0,0,0,0.3)'
+    setHover(true)
+  }
+
+  function changeBackgroundLeave(e: any) {
+    e.target.style.background = 'rgba(255,255,255,0)'
+    setHover(false)
+  }
+
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
 
   return (
     <>
@@ -86,7 +142,12 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
             {/* begin::Modal body */}
             <div className='modal-body scroll-y mx-5 mx-xl-15 my-7'>
               <>
-                <form id='form_upsert_user' className='form' onSubmit={formik.handleSubmit} noValidate>
+                <form
+                  id='form_upsert_user'
+                  className='form'
+                  onSubmit={formik.handleSubmit}
+                  noValidate
+                >
                   {/* begin::Scroll */}
                   <div
                     className='d-flex flex-column scroll-y me-n7 pe-7'
@@ -103,56 +164,120 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
                       {/* begin::Label */}
                       <label className='d-block fw-bold fs-6 mb-5'>Avatar</label>
                       {/* end::Label */}
-
+                      <div style={{display: 'flex', alignItems: 'center'}}>
+                        {imagenURL == null ? (
+                          <>
+                            <input
+                              style={{display: 'none'}}
+                              type='file'
+                              accept='.jpg,.jpeg,.png'
+                              onChange={handleFile}
+                              ref={hiddenFileInput}
+                            />
+                            <button
+                              style={{
+                                height: '100px',
+                                width: '100px',
+                                whiteSpace: 'break-spaces',
+                                textAlign: 'center',
+                                lineHeight: '20px',
+                              }}
+                              onClick={() => hiddenFileInput?.current!.click()}
+                            >
+                              Subir imagen
+                            </button>
+                          </>
+                        ) : (
+                          <div
+                            style={{
+                              height: '100px',
+                              width: '100px',
+                              position: 'relative',
+                            }}
+                            onClick={() => {
+                              setImagenURL(null)
+                            }}
+                          >
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: '-2px',
+                                bottom: '-2px',
+                                left: '-2px',
+                                right: '-2px',
+                                margin: 'auto',
+                                width: 'auto',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                textAlign: 'center',
+                              }}
+                              onMouseOver={changeBackgroundHover}
+                              onMouseLeave={changeBackgroundLeave}
+                            >
+                              {hover ? <i className='bi bi-x fs-2'></i> : null}
+                            </div>
+                            <img
+                              src={imagenURL}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain',
+                              }}
+                              alt='imagen'
+                            />
+                          </div>
+                        )}
+                      </div>
                       {/* begin::Image input */}
-                      <div
+                      {/* <div
                         className='image-input image-input-outline'
                         data-kt-image-input='true'
                         style={{backgroundImage: `url('${blankImg}')`}}
-                      >
-                        {/* begin::Preview existing avatar */}
-                        <div
+                      > */}
+                      {/* begin::Preview existing avatar */}
+                      {/* <div
                           className='image-input-wrapper w-125px h-125px'
                           style={{backgroundImage: `url('${userAvatarImg}')`}}
-                        ></div>
-                        {/* end::Preview existing avatar */}
+                        ></div> */}
+                      {/* end::Preview existing avatar */}
 
-                        {/* begin::Label */}
-                        {/* <label
-                        className='btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow'
-                        data-kt-image-input-action='change'
-                        data-bs-toggle='tooltip'
-                        title='Change avatar'
-                      >
-                        <i className='bi bi-pencil-fill fs-7'></i>
+                      {/* begin::Label */}
+                      {/* <label
+                          className='btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow'
+                          data-kt-image-input-action='change'
+                          data-bs-toggle='tooltip'
+                          title='Change avatar'
+                        >
+                          <i className='bi bi-pencil-fill fs-7'></i>
 
-                        <input type='file' name='avatar' accept='.png, .jpg, .jpeg' />
-                        <input type='hidden' name='avatar_remove' />
-                      </label> */}
-                        {/* end::Label */}
+                          <input type='file' name='avatar' accept='.png, .jpg, .jpeg' />
+                          <input type='hidden' name='avatar_remove' />
+                        </label> */}
+                      {/* end::Label */}
 
-                        {/* begin::Cancel */}
-                        {/* <span
-                        className='btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow'
-                        data-kt-image-input-action='cancel'
-                        data-bs-toggle='tooltip'
-                        title='Cancel avatar'
-                      >
-                        <i className='bi bi-x fs-2'></i>
-                      </span> */}
-                        {/* end::Cancel */}
+                      {/* begin::Cancel */}
+                      {/* <span
+                          className='btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow'
+                          data-kt-image-input-action='cancel'
+                          data-bs-toggle='tooltip'
+                          title='Cancel avatar'
+                        >
+                          <i className='bi bi-x fs-2'></i>
+                        </span> */}
+                      {/* end::Cancel */}
 
-                        {/* begin::Remove */}
-                        {/* <span
-                        className='btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow'
-                        data-kt-image-input-action='remove'
-                        data-bs-toggle='tooltip'
-                        title='Remove avatar'
-                      >
-                        <i className='bi bi-x fs-2'></i>
-                      </span> */}
-                        {/* end::Remove */}
-                      </div>
+                      {/* begin::Remove */}
+                      {/* <span
+                          className='btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow'
+                          data-kt-image-input-action='remove'
+                          data-bs-toggle='tooltip'
+                          title='Remove avatar'
+                        >
+                          <i className='bi bi-x fs-2'></i>
+                        </span> */}
+                      {/* end::Remove */}
+                      {/* </div> */}
                       {/* end::Image input */}
 
                       {/* begin::Hint */}
@@ -190,7 +315,7 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
 
                     {/* begin::Input group */}
                     <div className='row'>
-                      <div className="col">
+                      <div className='col'>
                         <div className='fv-row mb-7'>
                           <label className='required fw-bold fs-6 mb-2'>Apellido Paterno</label>
                           <input
@@ -199,9 +324,14 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
                             name='apellido_paterno'
                             className={clsx(
                               'form-control form-control-solid mb-3 mb-lg-0',
-                              {'is-invalid': formik.touched.apellido_paterno && formik.errors.apellido_paterno},
                               {
-                                'is-valid': formik.touched.apellido_paterno && !formik.errors.apellido_paterno,
+                                'is-invalid':
+                                  formik.touched.apellido_paterno && formik.errors.apellido_paterno,
+                              },
+                              {
+                                'is-valid':
+                                  formik.touched.apellido_paterno &&
+                                  !formik.errors.apellido_paterno,
                               }
                             )}
                             autoComplete='off'
@@ -216,7 +346,7 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
                           )}
                         </div>
                       </div>
-                      <div className="col">
+                      <div className='col'>
                         <div className='fv-row mb-7'>
                           <label className='required fw-bold fs-6 mb-2'>Apellido Paterno</label>
                           <input
@@ -225,9 +355,14 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
                             name='apellido_materno'
                             className={clsx(
                               'form-control form-control-solid mb-3 mb-lg-0',
-                              {'is-invalid': formik.touched.apellido_materno && formik.errors.apellido_materno},
                               {
-                                'is-valid': formik.touched.apellido_materno && !formik.errors.apellido_materno,
+                                'is-invalid':
+                                  formik.touched.apellido_materno && formik.errors.apellido_materno,
+                              },
+                              {
+                                'is-valid':
+                                  formik.touched.apellido_materno &&
+                                  !formik.errors.apellido_materno,
                               }
                             )}
                             autoComplete='off'
@@ -272,8 +407,38 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
                     {/* end::Input group */}
 
                     {/* begin::Input group */}
+                    <div className='fv-row mb-7'>
+                      <label className='required fw-bold fs-6 mb-2'>Fecha de nacimiento</label>
+                      <input
+                        placeholder='ejemplo@ejemplo.ejemplo'
+                        {...formik.getFieldProps('fecha_nacimiento')}
+                        className={clsx(
+                          'form-control form-control-solid mb-3 mb-lg-0',
+                          {
+                            'is-invalid':
+                              formik.touched.fecha_nacimiento && formik.errors.fecha_nacimiento,
+                          },
+                          {
+                            'is-valid':
+                              formik.touched.fecha_nacimiento && !formik.errors.fecha_nacimiento,
+                          }
+                        )}
+                        type='date'
+                        name='fecha_nacimiento'
+                        autoComplete='off'
+                        disabled={formik.isSubmitting || isUserLoading}
+                      />
+                      {formik.touched.fecha_nacimiento && formik.errors.fecha_nacimiento && (
+                        <div className='fv-plugins-message-container'>
+                          <span role='alert'>{formik.errors.fecha_nacimiento}</span>
+                        </div>
+                      )}
+                    </div>
+                    {/* end::Input group */}
+
+                    {/* begin::Input group */}
                     <div className='row'>
-                      <div className="col">
+                      <div className='col'>
                         <div className='fv-row mb-7'>
                           <label className='fw-bold fs-6 mb-2'>Número Celular</label>
                           <input
@@ -299,7 +464,7 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
                           )}
                         </div>
                       </div>
-                      <div className="col">
+                      <div className='col'>
                         <div className='fv-row mb-7'>
                           <label className='required fw-bold fs-6 mb-2'>DNI</label>
                           <input
@@ -371,7 +536,9 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible}) => {
                       type='submit'
                       className='btn btn-primary'
                       data-kt-users-modal-action='submit'
-                      disabled={isUserLoading || formik.isSubmitting || !formik.isValid || !formik.touched}
+                      disabled={
+                        isUserLoading || formik.isSubmitting || !formik.isValid || !formik.touched
+                      }
                     >
                       <span className='indicator-label'>Guardar</span>
                       {(formik.isSubmitting || isUserLoading) && (
