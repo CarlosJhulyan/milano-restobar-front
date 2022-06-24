@@ -35,6 +35,9 @@ export const ApiPath = {
   },
   Recipe: {
     RecipePlate: 'receta/getRecetaPlato',
+    Create:'receta/createReceta',
+    List: 'receta/getRecetas',
+    Delete: 'receta/deleteRecetas',
   },
   Menus: {
     List: 'carta/getCartas',

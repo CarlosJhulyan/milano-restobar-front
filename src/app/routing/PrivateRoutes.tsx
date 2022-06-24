@@ -7,6 +7,7 @@ import {MenuTestPage} from '../pages/MenuTestPage'
 import {getCSSVariableValue} from '../../_metronic/assets/ts/_utils'
 import {DashboardAdmin} from '../modules/admin/DashboardAdmin'
 import {useAuth} from '../modules/auth'
+import RecetasPage from '../modules/admin/recetas/RecetasPage'
 
 const PrivateRoutes = () => {
   const BuilderPageWrapper = lazy(() => import('../pages/layout-builder/BuilderPageWrapper'))
@@ -45,6 +46,7 @@ const PrivateRoutes = () => {
             <Route path='admin/platos' element={<PlatesPageAdmin />} />
             <Route path='admin/cartas' element={<MenusPageAdmin />} />
             <Route path='admin/restaurantes' element={<RestaurantesPageAdmin />} />
+            <Route path='admin/recetas' element={<RecetasPage />} />
           </>
         )}
 
