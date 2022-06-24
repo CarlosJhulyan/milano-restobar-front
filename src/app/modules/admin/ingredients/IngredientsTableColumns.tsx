@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import {Column} from 'react-table'
 import { KTSVG } from '../../../../_metronic/helpers'
 import { getImageUrlBackend } from '../../../../_metronic/helpers/getImageUrlBackend'
+import { CustonHeaderIngrediente } from '../../apps/user-management/users-list/table/columns/CustonHeaderIngrediente'
 import { UserActionsCell } from '../../apps/user-management/users-list/table/columns/UserActionsCell'
 import { UserCustomHeader } from '../../apps/user-management/users-list/table/columns/UserCustomHeader'
 import { UserInfoCell } from '../../apps/user-management/users-list/table/columns/UserInfoCell'
@@ -9,12 +10,12 @@ import { UserLastLoginCell } from '../../apps/user-management/users-list/table/c
 import { UserSelectionCell } from '../../apps/user-management/users-list/table/columns/UserSelectionCell'
 import { UserSelectionHeader } from '../../apps/user-management/users-list/table/columns/UserSelectionHeader'
 import { UserTwoStepsCell } from '../../apps/user-management/users-list/table/columns/UserTwoStepsCell'
-import { Ingredient } from './constants'
+import { Ingredient } from './constantsIngrediente'
 
 
 const ingredientsTableColumn: ReadonlyArray<Column<Ingredient>> = [
   {
-    Header: (props) => <UserCustomHeader tableProps={props} title='Ingrediente' className='min-w-125px' />,
+    Header: (props) => <CustonHeaderIngrediente tableProps={props} title='Ingrediente' className='min-w-125px' />,
     id: 'nombre',
     Cell: ({...props}) => (
       <div className='d-flex align-items-center'>
@@ -47,7 +48,7 @@ const ingredientsTableColumn: ReadonlyArray<Column<Ingredient>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Precio de compra' className='min-w-125px' />
+      <CustonHeaderIngrediente tableProps={props} title='Precio de compra' className='min-w-125px' />
     ),
     id: 'precio',
     Cell: ({...props}) => (
@@ -59,7 +60,7 @@ const ingredientsTableColumn: ReadonlyArray<Column<Ingredient>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Stock Físico' className='min-w-125px' />
+      <CustonHeaderIngrediente tableProps={props} title='Stock Físico' className='min-w-125px' />
     ),
     id: 'stock_fisico',
     Cell: ({...props}) => (
@@ -72,7 +73,7 @@ const ingredientsTableColumn: ReadonlyArray<Column<Ingredient>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Medida' className='min-w-125px' />
+      <CustonHeaderIngrediente tableProps={props} title='Medida' className='min-w-125px' />
     ),
     id: 'medida',
     Cell: ({...props}) => (
@@ -83,13 +84,13 @@ const ingredientsTableColumn: ReadonlyArray<Column<Ingredient>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Acciones' className='text-end min-w-100px' />
+      <CustonHeaderIngrediente tableProps={props} title='Acciones' className='text-end min-w-100px' />
     ),
     id: 'actions',
     Cell: ({...props}) => (
       <div>
         <div className='d-flex justify-content-end flex-shrink-0'>
-          <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+          <a  onClick={() => props.editIngrediente(props.data[props.row.index])}className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
             <KTSVG path='/media/icons/duotune/art/art005.svg' className='svg-icon-3' />
           </a>
           <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>

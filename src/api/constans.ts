@@ -24,8 +24,12 @@ export const ApiPath = {
   },
   Ingredients: {
     List: 'ingrediente/getIngredientes',
+    Create: 'ingrediente/createIngrediente',
+    Update: 'ingrediente/updateIngrediente',
   },
   Plates: {
+    Create: 'plato/createPlato',
+    Update: 'plato/updatePlato',
     List: 'plato/getPlatos',
     ListByMenu: 'plato/getPlatosCarta'
   },
@@ -40,6 +44,8 @@ export const ApiPath = {
   },
   Restaurants: {
     List: 'restaurante/getRestaurantes',
+    Create: 'restaurante/createRestaurantes',
+    Delete: 'restaurante/deleteRestaurantes/',
     ListByRestaurant: 'restaurante/getMesasPorRestaurante',
   },
   Order: {
@@ -52,5 +58,8 @@ export const ApiPath = {
   },
   Global: {
     GetCoinsType: '/getFormaPago'
+  },
+  Categorias: {
+    GetCategorias: 'categoria/getCategoria'
   }
 }

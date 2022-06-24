@@ -2,13 +2,14 @@ import clsx from 'clsx'
 import {Column} from 'react-table'
 import { KTSVG } from '../../../../_metronic/helpers'
 import { getImageUrlBackend } from '../../../../_metronic/helpers/getImageUrlBackend'
+import { CustomPlateHeader } from '../../apps/user-management/users-list/table/columns/CustomPLateHeader'
 import { UserCustomHeader } from '../../apps/user-management/users-list/table/columns/UserCustomHeader'
-import { Plate } from './constants'
+import { Plate } from './constantsPlates'
 
 
 const platesTableColumns: ReadonlyArray<Column<Plate>> = [
   {
-    Header: (props) => <UserCustomHeader tableProps={props} title='Platillo' className='min-w-125px' />,
+    Header: (props) => <CustomPlateHeader tableProps={props} title='Platillo' className='min-w-125px' />,
     id: 'vta_nombre_plato',
     Cell: ({...props}) => (
       <div className='d-flex align-items-center'>
@@ -41,7 +42,7 @@ const platesTableColumns: ReadonlyArray<Column<Plate>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Precio' className='min-w-125px' />
+      <CustomPlateHeader tableProps={props} title='Precio' className='min-w-125px' />
     ),
     id: 'vta_precio',
     Cell: ({...props}) => (
@@ -50,7 +51,7 @@ const platesTableColumns: ReadonlyArray<Column<Plate>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Descripción' className='min-w-125px' />
+      <CustomPlateHeader tableProps={props} title='Descripción' className='min-w-125px' />
     ),
     id: 'vta_desc_plato',
     Cell: ({...props}) => (
@@ -59,7 +60,7 @@ const platesTableColumns: ReadonlyArray<Column<Plate>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Dificultad' className='min-w-125px' />
+      <CustomPlateHeader tableProps={props} title='Dificultad' className='min-w-125px' />
     ),
     id: 'vta_dificultad_plato',
     Cell: ({...props}) => (
@@ -72,7 +73,7 @@ const platesTableColumns: ReadonlyArray<Column<Plate>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Categoría' className='min-w-125px' />
+      <CustomPlateHeader tableProps={props} title='Categoría' className='min-w-125px' />
     ),
     id: 'vta_categoria_plato',
     Cell: ({...props}) => (
@@ -81,13 +82,13 @@ const platesTableColumns: ReadonlyArray<Column<Plate>> = [
   },
   {
     Header: (props) => (
-      <UserCustomHeader tableProps={props} title='Acciones' className='text-end min-w-100px' />
+      <CustomPlateHeader tableProps={props} title='Acciones' className='text-end min-w-100px' />
     ),
     id: 'actions',
     Cell: ({...props}) => (
       <div>
         <div className='d-flex justify-content-end flex-shrink-0'>
-          <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+          <a  onClick={() => props.editPlates(props.data[props.row.index])} className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
             <KTSVG path='/media/icons/duotune/art/art005.svg' className='svg-icon-3' />
           </a>
           <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>

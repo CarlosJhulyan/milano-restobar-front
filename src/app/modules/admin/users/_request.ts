@@ -34,5 +34,5 @@ export function editUser(body: User, avatar: File) {
 
   if (avatar) formData.append('avatar', avatar)
 
-  return httpClientFormData.put(ApiPath.Users.Update, formData)
+  return httpClientFormData.post(ApiPath.Users.Update, formData)
 }

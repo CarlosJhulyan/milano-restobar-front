@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTable, ColumnInstance, Row } from 'react-table'
 import { CustomHeaderColumn } from '../../apps/user-management/users-list/table/columns/CustomHeaderColumn'
 import { CustomRow } from '../../apps/user-management/users-list/table/columns/CustomRow'
+import clsx from 'clsx'
 import { useQueryResponseLoading } from '../../apps/user-management/users-list/core/QueryResponseProvider'
 import { KTCard, KTCardBody, KTSVG } from '../../../../_metronic/helpers'
 import { UsersListPagination } from '../../apps/user-management/users-list/components/pagination/UsersListPagination'
@@ -9,13 +10,14 @@ import { UsersListPagination } from '../../apps/user-management/users-list/compo
 import { httpClient } from '../../../../api/api'
 import { ApiPath } from '../../../../api/constans'
 import { rolesTableColumn } from './rolesTableColumns'
-import { Role, User } from './constats'
+import {  User } from './constats'
 import { Loading } from '../Loading'
-import { Button, Modal } from 'react-bootstrap'
+import { ModalRolesUpdate } from './ModalRolesUpdate'
 
 const RolesList = ({ setCurrentUser }: { setCurrentUser: any }) => {
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);
+  const [dataEnviar, setDataEnviar] = useState({});
   const isLoading = useQueryResponseLoading()
   const columns = useMemo(() => rolesTableColumn, [])
   const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable({
@@ -23,8 +25,12 @@ const RolesList = ({ setCurrentUser }: { setCurrentUser: any }) => {
     data
   })
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+
+  const editRole = async (user: User) => {
+    setShow(true);
+    setDataEnviar(user);
+  }
+
 
   const getDataUsers = async () => {
     const { data } = await httpClient.get(ApiPath.Users.List)
@@ -77,7 +83,20 @@ const RolesList = ({ setCurrentUser }: { setCurrentUser: any }) => {
               {rows.length > 0 ? (
                 rows.map((row: Row<User>, i) => {
                   prepareRow(row)
-                  return <CustomRow row={row} key={`row-${i}-${row.id}`} handleShow={handleShow} />
+                  return <tr {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <td
+                          {...cell.getCellProps()}
+                          className={clsx({ 'text-end min-w-100px': cell.column.id === 'actions' })}
+                        >
+                          {cell.render('Cell', {
+                            editRole: (e: User) => editRole(e),
+                          })}
+                        </td>
+                      )
+                    })}
+                  </tr>
                 })
               ) : (
                 <tr>
@@ -93,20 +112,7 @@ const RolesList = ({ setCurrentUser }: { setCurrentUser: any }) => {
         </div>
         {
           show ?
-            <Modal show={show} onHide={handleClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Modal heading</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                  Close
-                </Button>
-                <Button variant="primary" onClick={handleClose}>
-                  Save Changes
-                </Button>
-              </Modal.Footer>
-            </Modal>
+            <ModalRolesUpdate user={dataEnviar} isUserLoading={false} setShow={setShow} getDataUsers={getDataUsers}/>
             : null
         }
         <UsersListPagination />

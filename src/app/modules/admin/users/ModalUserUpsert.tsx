@@ -142,25 +142,8 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible, getDa
             {/* begin::Modal body */}
             <div className='modal-body scroll-y mx-5 mx-xl-15 my-7'>
               <>
-                <form
-                  id='form_upsert_user'
-                  className='form'
-                  onSubmit={formik.handleSubmit}
-                  noValidate
-                >
-                  {/* begin::Scroll */}
-                  <div
-                    className='d-flex flex-column scroll-y me-n7 pe-7'
-                    id='kt_modal_add_user_scroll'
-                    data-kt-scroll='true'
-                    data-kt-scroll-activate='{default: false, lg: true}'
-                    data-kt-scroll-max-height='auto'
-                    data-kt-scroll-dependencies='#kt_modal_add_user_header'
-                    data-kt-scroll-wrappers='#kt_modal_add_user_scroll'
-                    data-kt-scroll-offset='300px'
-                  >
-                    {/* begin::Input group */}
-                    <div className='fv-row mb-7'>
+              {/* begin::Input group */}
+              <div className='fv-row mb-7'>
                       {/* begin::Label */}
                       <label className='d-block fw-bold fs-6 mb-5'>Avatar</label>
                       {/* end::Label */}
@@ -284,6 +267,25 @@ const ModalUserUpsert: FC<Props> = ({user, isUserLoading, setModalVisible, getDa
                       {/* <div className='form-text'>Allowed file types: png, jpg, jpeg.</div> */}
                       {/* end::Hint */}
                     </div>
+                    
+                <form
+                  id='form_upsert_user'
+                  className='form'
+                  onSubmit={formik.handleSubmit}
+                  noValidate
+                >
+                  {/* begin::Scroll */}
+                  <div
+                    className='d-flex flex-column scroll-y me-n7 pe-7'
+                    id='kt_modal_add_user_scroll'
+                    data-kt-scroll='true'
+                    data-kt-scroll-activate='{default: false, lg: true}'
+                    data-kt-scroll-max-height='auto'
+                    data-kt-scroll-dependencies='#kt_modal_add_user_header'
+                    data-kt-scroll-wrappers='#kt_modal_add_user_scroll'
+                    data-kt-scroll-offset='300px'
+                  >
+                    
                     {/* end::Input group */}
 
                     {/* begin::Input group */}

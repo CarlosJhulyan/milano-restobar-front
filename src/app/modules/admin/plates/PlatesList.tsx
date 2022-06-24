@@ -1,25 +1,46 @@
-import {useEffect, useMemo, useState} from 'react'
-import {useTable, ColumnInstance, Row} from 'react-table'
-import {CustomHeaderColumn} from '../../apps/user-management/users-list/table/columns/CustomHeaderColumn'
-import {CustomRow} from '../../apps/user-management/users-list/table/columns/CustomRow'
+import { useEffect, useMemo, useState } from 'react'
+import { useTable, ColumnInstance, Row } from 'react-table'
+import { CustomHeaderColumn } from '../../apps/user-management/users-list/table/columns/CustomHeaderColumn'
+import { CustomRow } from '../../apps/user-management/users-list/table/columns/CustomRow'
 import { KTCard, KTCardBody, KTSVG } from '../../../../_metronic/helpers'
 import { User } from '../../apps/user-management/users-list/core/_models'
 import { UsersListPagination } from '../../apps/user-management/users-list/components/pagination/UsersListPagination'
 import { httpClient } from '../../../../api/api'
 import { ApiPath } from '../../../../api/constans'
 import { Loading } from '../Loading'
+import clsx from 'clsx'
 import { platesTableColumns } from './platesTableColumns'
+import { Plate } from './constantsPlates'
+import { CustomPlateHeader } from '../../apps/user-management/users-list/table/columns/CustomPLateHeader'
+import { CustomHeaderPlateColumn } from '../../apps/user-management/users-list/table/columns/CustomHeaderPlateColumn'
+import { ModalPlatesUpsert } from './ModalPlatesUpsert'
 
 
 const PlatesList = () => {
   const [data, setData] = useState([]);
+  const [dataCate, setDataCate] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [dataEnviar, setDataEnviar] = useState<Plate>({
+    vta_nombre_plato: '',
+    vta_desc_plato: '',
+    vta_ruta_imagen_plato: '',
+    vta_precio: '',
+    id_vta_plato: '',
+    vta_dificultad_id_vta_dificultad: '',
+    vta_categoria_id_vta_categoria: '',
+    id_cme_receta: ''
+  });
+  const [mostrarModal, setMostrarModal] = useState(false);
   const columns = useMemo(() => platesTableColumns, [])
-  const {getTableProps, getTableBodyProps, headers, rows, prepareRow} = useTable({
+  const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable({
     columns,
     data,
   })
 
+  const editPlates = async (plate: Plate) => {
+    setMostrarModal(true);
+    setDataEnviar(plate);
+  }
   const getDataUsers = async () => {
     setIsLoading(true);
     try {
@@ -31,8 +52,21 @@ const PlatesList = () => {
     setIsLoading(false);
   }
 
+  const getCategoria = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await httpClient.get(ApiPath.Categorias.GetCategorias)
+      setDataCate(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLoading(false);
+  }
+
+
   useEffect(() => {
-    getDataUsers()
+    getDataUsers();
+    getCategoria();
   }, [])
 
   return (
@@ -50,8 +84,8 @@ const PlatesList = () => {
               data-kt-user-table-filter='search'
               className='form-control form-control-solid w-250px ps-14'
               placeholder='Buscar Platillo'
-              // value={searchTerm}
-              // onChange={(e) => setSearchTerm(e.target.value)}
+            // value={searchTerm}
+            // onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           {/* end::Search */}
@@ -70,10 +104,22 @@ const PlatesList = () => {
             {/* end::Export */}
 
             {/* begin::Add user */}
-            <button 
-              type='button' 
-              className='btn btn-primary' 
-              // onClick={openAddUserModal}
+            <button
+              type='button'
+              className='btn btn-primary'
+              onClick={() => {
+                setMostrarModal(true)
+                setDataEnviar({
+                  vta_nombre_plato: '',
+                  vta_desc_plato: '',
+                  vta_ruta_imagen_plato: '',
+                  vta_precio: '',
+                  id_vta_plato: '',
+                  vta_dificultad_id_vta_dificultad: '',
+                  vta_categoria_id_vta_categoria: '',
+                  id_cme_receta: ''
+                })
+              }}
             >
               <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
               Agregar platillo
@@ -93,16 +139,32 @@ const PlatesList = () => {
           >
             <thead>
               <tr className='text-start text-muted fw-bolder fs-7 text-uppercase gs-0'>
-                {headers.map((column: ColumnInstance<User>) => (
-                  <CustomHeaderColumn key={column.id} column={column} />
+                {headers.map((column: ColumnInstance<Plate>) => (
+                  <CustomHeaderPlateColumn key={column.id} column={column} />
                 ))}
               </tr>
             </thead>
             <tbody className='text-gray-600 fw-bold' {...getTableBodyProps()}>
               {rows.length > 0 ? (
-                rows.map((row: Row<User>, i) => {
+                rows.map((row: Row<Plate>, i) => {
                   prepareRow(row)
-                  return <CustomRow row={row} key={`row-${i}-${row.id}`} />
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map((cell) => {
+                        return (
+                          <td
+                            {...cell.getCellProps()}
+                            className={clsx({ 'text-end min-w-100px': cell.column.id === 'actions' })}
+                          >
+                            {cell.render('Cell', {
+                              editPlates: (e: Plate) => editPlates(e),
+                              // deleteRow: (e: User) => deleteRow(e),
+                            })}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  )
                 })
               ) : (
                 <tr>
@@ -119,8 +181,20 @@ const PlatesList = () => {
         <UsersListPagination />
         {isLoading && <Loading />}
       </KTCardBody>
-    </KTCard>
+
+      {
+        mostrarModal ?
+          <ModalPlatesUpsert
+            dataCate={dataCate}
+            isUserLoading={false}
+            plate={dataEnviar}
+            setMostrarModal={setMostrarModal}
+            getDataUsers={getDataUsers}
+          />
+          : null}
+
+    </KTCard >
   )
 }
 
-export {PlatesList}
+export { PlatesList }

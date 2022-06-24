@@ -1,12 +1,13 @@
 import {FC} from 'react'
 import {ColumnInstance} from 'react-table'
+import { Plate } from '../../../../../admin/plates/constantsPlates'
 import {User} from '../../core/_models'
 
 type Props = {
-  column: ColumnInstance
+  column: ColumnInstance<Plate>
 }
 
-const CustomHeaderColumn: FC<Props> = ({column}) => (
+const CustomHeaderPlateColumn: FC<Props> = ({column}) => (
   <>
     {column.Header && typeof column.Header === 'string' ? (
       <th {...column.getHeaderProps()}>{column.render('Header')}</th>
@@ -16,4 +17,4 @@ const CustomHeaderColumn: FC<Props> = ({column}) => (
   </>
 )
 
-export {CustomHeaderColumn}
+export {CustomHeaderPlateColumn}

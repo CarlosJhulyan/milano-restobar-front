@@ -1,20 +1,22 @@
 import { Store } from "react-notifications-component";
 import 'react-notifications-component/dist/theme.css';
 
-type TypeNotification = 
+type TypeNotification =
   | 'success'
   | 'warning'
   | 'danger'
   | 'info'
   | 'default';
 
-type TypeTitleSystem = 
+type TypeTitleSystem =
   | 'Sistema'
+  | 'Restaurant'
   | 'Login'
   | 'Registro'
   | 'Usuario'
   | 'Pedido'
   | 'Carta'
+  | 'Rol'
   | 'Administrador';
 
 

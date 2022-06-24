@@ -5,10 +5,8 @@ import TopBarProgress from 'react-topbar-progress-indicator'
 // import {DashboardWrapper} from '../pages/dashboard/DashboardWrapper'
 import {MenuTestPage} from '../pages/MenuTestPage'
 import {getCSSVariableValue} from '../../_metronic/assets/ts/_utils'
-import { DashboardAdmin } from '../modules/admin/DashboardAdmin'
-import { useAuth } from '../modules/auth'
-import PlaceOrderPage from "../modules/users/ordersCajero/PlaceOrder/PlaceOrderPage";
-import OrdersPage from "../modules/users/ordersCajero/OrdersList/OrdersPage";
+import {DashboardAdmin} from '../modules/admin/DashboardAdmin'
+import {useAuth} from '../modules/auth'
 
 const PrivateRoutes = () => {
   const BuilderPageWrapper = lazy(() => import('../pages/layout-builder/BuilderPageWrapper'))
@@ -22,13 +20,14 @@ const PrivateRoutes = () => {
   const IngredientsPageAdmin = lazy(() => import('../modules/admin/ingredients/IngredientsPage'))
   const PlatesPageAdmin = lazy(() => import('../modules/admin/plates/PlatesPage'))
   const MenusPageAdmin = lazy(() => import('../modules/admin/menus/MenusPage'))
+  const RestaurantesPageAdmin = lazy(() => import('../modules/admin/restaurantes/RestaurantesPage'))
   const RolesPage = lazy(() => import('../modules/admin/roles/RolesPage'))
 
   const PlatesPage = lazy(() => import('../modules/users/plates/PlatesPage'))
-  const MakeOrderPage = lazy(() => import('../modules/users/orders/MakeOrderPage/MakeOrderPage'));
+  const MakeOrderPage = lazy(() => import('../modules/users/orders/MakeOrderPage/MakeOrderPage'))
   const MyOrdersPage = lazy(() => import('../modules/users/orders/MyOrders/MyOrdersPage'))
 
-  const { currentUser, currentAdmin } = useAuth()
+  const {currentUser, currentAdmin} = useAuth()
 
   return (
     <Routes>
@@ -45,11 +44,11 @@ const PrivateRoutes = () => {
             <Route path='admin/ingredientes' element={<IngredientsPageAdmin />} />
             <Route path='admin/platos' element={<PlatesPageAdmin />} />
             <Route path='admin/cartas' element={<MenusPageAdmin />} />
+            <Route path='admin/restaurantes' element={<RestaurantesPageAdmin />} />
           </>
-        )
-        }
-        
-        {(currentUser && currentUser.tipo_usuario == 'M') && (
+        )}
+
+        {currentUser && (
           <>
             <Route path='tablero' element={<DashboardAdmin />} />
             <Route path='platos' element={<PlatesPage />} />
@@ -58,14 +57,6 @@ const PrivateRoutes = () => {
           </>
         )}
 
-        {(currentUser && currentUser.tipo_usuario == 'O') && (
-          <>
-            <Route path='tablero' element={<DashboardAdmin />} />
-            <Route path='realizarPedido' element={<PlaceOrderPage />} />
-            <Route path='pedidos' element={<OrdersPage />} />
-          </>
-        )}
-        
         {/* <Route path='tablero' element={<DashboardWrapper />} /> */}
         <Route path='builder' element={<BuilderPageWrapper />} />
         <Route path='menu-test' element={<MenuTestPage />} />
