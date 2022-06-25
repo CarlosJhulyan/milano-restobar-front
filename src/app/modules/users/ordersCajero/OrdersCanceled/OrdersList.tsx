@@ -13,7 +13,7 @@ const OrdersList = () => {
 
   const getOrders = () => {
     setLoading(true)
-    httpClient.get(ApiPath.Order.GetFulfilled)
+    httpClient.get(ApiPath.Order.GetCanceled)
       .then(response => {
         if (response.data.success) {
           setLoading(false)
@@ -40,7 +40,6 @@ const OrdersList = () => {
               <th className='min-w-120px'>Hora</th>
               <th className='min-w-120px'>Mozo</th>
               <th className='min-w-120px'>Total</th>
-              <th className='min-w-100px text-end'>Realizar Pago</th>
             </tr>
             </thead>
             {!loading ? (
@@ -48,7 +47,7 @@ const OrdersList = () => {
               {orders.map(item => (
                 <tr key={item.idvta_pedido_venta_cab || 0}>
                   <td>
-                    <span className='text-dark fw-bolder fs-6'>
+                    <span className='text-danger fw-bolder fs-6'>
                       #{item.num_vta_pedido}
                     </span>
                   </td>
@@ -64,30 +63,18 @@ const OrdersList = () => {
                   <td>
                     {`${item.nombre} ${item.apellido_paterno}`}
                   </td>
-                  <td className='text-dark fw-bolder fs-6'>
+                  <td className='text-danger fw-bolder fs-6'>
                     S/. {item.monto_total}
-                  </td>
-                  <td className='text-end'>
-                    <button
-                      className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                    >
-                      <Link to={`/realizarPago?pedido=${item.idvta_pedido_venta_cab}`} >
-                        <KTSVG
-                          path='/media/icons/duotune/arrows/arr064.svg'
-                          className='svg-icon-2 svg-icon-primary'
-                        />
-                      </Link>
-                    </button>
                   </td>
                 </tr>
               ))}
               </tbody>
             ) : (
               <tbody>
-                <tr>
-                  <Loading />
-                </tr>
-                <tr></tr>
+              <tr>
+                <Loading />
+              </tr>
+              <tr></tr>
               </tbody>
             )}
           </table>

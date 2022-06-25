@@ -55,7 +55,7 @@ const PlatesList = () => {
   const getCategoria = async () => {
     setIsLoading(true);
     try {
-      const { data } = await httpClient.get(ApiPath.Categorias.GetCategorias)
+      const { data } = await httpClient.get(ApiPath.Categories.GetCategories)
       setDataCate(data.data);
     } catch (error) {
       console.error(error);

@@ -74,9 +74,9 @@ const MenusList = ({handleSetMenuItem, setIsLoading, data, getDataMenu, isLoadin
             <tbody className='text-gray-600 fw-bold'>
               {data.map(item => (
                 <ItemMenuList
-                  menu={item}
+                  table={item}
                   key={item.id_vta_carta}
-                  handleDeleteMenu={handleDeleteMenu}
+                  handleDeleteTable={handleDeleteMenu}
                   handleSetMenuItem={handleSetMenuItem}
                 />
               ))}

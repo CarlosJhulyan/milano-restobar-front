@@ -50,7 +50,7 @@ const ModalPlatesUpsert: FC<Props> = ({ plate, isUserLoading, setMostrarModal, g
 
   useEffect(() => {
     if (plate && plate.vta_ruta_imagen_plato) {
-      setImagenURL(getImageUrlBackend(`/avatars/${plate.vta_ruta_imagen_plato}`))
+      setImagenURL(getImageUrlBackend(`/plates/${plate.vta_ruta_imagen_plato}`))
     }
   }, [plate])
 

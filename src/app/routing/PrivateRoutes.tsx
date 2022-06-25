@@ -23,20 +23,23 @@ const PrivateRoutes = () => {
   const MenusPageAdmin = lazy(() => import('../modules/admin/menus/MenusPage'))
   const RestaurantesPageAdmin = lazy(() => import('../modules/admin/restaurantes/RestaurantesPage'))
   const RolesPage = lazy(() => import('../modules/admin/roles/RolesPage'))
+  const TablesPageAdmin = lazy(() => import("../modules/admin/tables/TablesPage"))
+  const CategoriesPageAdmin = lazy(() => import("../modules/admin/categories/CategoriesPage"))
 
   const PlatesPage = lazy(() => import('../modules/users/plates/PlatesPage'))
   const MakeOrderPage = lazy(() => import('../modules/users/orders/MakeOrderPage/MakeOrderPage'))
   const MyOrdersPage = lazy(() => import('../modules/users/orders/MyOrders/MyOrdersPage'))
+  const OrdersListPage = lazy(() => import('../modules/users/ordersCajero/OrdersList/OrdersPage'))
+  const PlaceOrderPage = lazy(() => import('../modules/users/ordersCajero/PlaceOrder/PlaceOrderPage'))
+  const OrdersListPageCanceled = lazy(() => import('../modules/users/ordersCajero/OrdersCanceled/OrdersPage'))
 
   const {currentUser, currentAdmin} = useAuth()
 
   return (
     <Routes>
       <Route element={<MasterLayout />}>
-        {/* Redirect to Dashboard after success login/registartion */}
         {currentUser && <Route path='login/*' element={<Navigate to='/tablero' />} />}
         {currentAdmin && <Route path='admin/login/*' element={<Navigate to='/admin/tablero' />} />}
-        {/* Pages */}
         {currentAdmin && (
           <>
             <Route path='admin/tablero' element={<DashboardAdmin />} />
@@ -47,15 +50,26 @@ const PrivateRoutes = () => {
             <Route path='admin/cartas' element={<MenusPageAdmin />} />
             <Route path='admin/restaurantes' element={<RestaurantesPageAdmin />} />
             <Route path='admin/recetas' element={<RecetasPage />} />
+            <Route path='admin/mesas' element={<TablesPageAdmin />} />
+            <Route path='admin/categorias' element={<CategoriesPageAdmin />} />
           </>
         )}
 
-        {currentUser && (
+        {(currentUser && currentUser.tipo_usuario === 'M') && (
           <>
             <Route path='tablero' element={<DashboardAdmin />} />
             <Route path='platos' element={<PlatesPage />} />
             <Route path='realizarPedido' element={<MakeOrderPage />} />
             <Route path='misPedidos' element={<MyOrdersPage />} />
+          </>
+        )}
+
+        {(currentUser && currentUser.tipo_usuario === 'O') && (
+          <>
+            <Route path='tablero' element={<DashboardAdmin />} />
+            <Route path='pedidos' element={<OrdersListPage />} />
+            <Route path='realizarPago' element={<PlaceOrderPage />} />
+            <Route path='cancelados' element={<OrdersListPageCanceled />} />
           </>
         )}
 
@@ -112,7 +126,7 @@ const PrivateRoutes = () => {
           }
         />
         {/* Page Not Found */}
-        <Route path='*' element={<Navigate to='/error/404' />} />
+        <Route path='*' element={<Navigate to='/' />} />
       </Route>
     </Routes>
   )

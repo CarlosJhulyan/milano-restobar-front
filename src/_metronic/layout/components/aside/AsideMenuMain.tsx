@@ -79,12 +79,12 @@ export function AsideMenuMain() {
             title='Recetas'
             fontIcon='bi-layers'
           />
-          <AsideMenuItem
-            to='/admin/medidas'
-            icon='/media/icons/duotune/ecommerce/ecm003.svg'
-            title='Unidades de Medida'
-            fontIcon='bi-layers'
-          />
+          {/*<AsideMenuItem*/}
+          {/*  to='/admin/medidas'*/}
+          {/*  icon='/media/icons/duotune/ecommerce/ecm003.svg'*/}
+          {/*  title='Unidades de Medida'*/}
+          {/*  fontIcon='bi-layers'*/}
+          {/*/>*/}
         </>
       )}
 
@@ -118,13 +118,13 @@ export function AsideMenuMain() {
             </div>
           </div>
           <AsideMenuItem
-            to='/admin/restaurantes'
+            to='/admin/mesas'
             icon='/media/icons/duotune/general/gen017.svg'
             title='Mesas'
             fontIcon='bi-layers'
           />
           <AsideMenuItem
-            to='/admin/restaurantes'
+            to='/admin/categorias'
             icon='/media/icons/duotune/general/gen003.svg'
             title='Categorías'
             fontIcon='bi-layers'
@@ -181,6 +181,12 @@ export function AsideMenuMain() {
             to='/pedidos'
             icon='/media/icons/duotune/ecommerce/ecm008.svg'
             title='Pedidos'
+            fontIcon='bi-layers'
+          />
+          <AsideMenuItem
+            to='/cancelados'
+            icon='/media/icons/duotune/ecommerce/ecm008.svg'
+            title='Pedidos Cancelados'
             fontIcon='bi-layers'
           />
         </>

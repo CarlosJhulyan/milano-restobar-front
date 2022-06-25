@@ -17,6 +17,7 @@ type TypeTitleSystem =
   | 'Pedido'
   | 'Carta'
   | 'Rol'
+  | 'Mesa'
   | 'Administrador';
 
 

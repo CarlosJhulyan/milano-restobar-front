@@ -44,7 +44,7 @@ const MenusPage: FC = () => {
         <div className='col-xl-6'>
           <MenusForm
             getDataMenu={getDataMenu}
-            currentMenu={currentMenu}
+            currentTable={currentMenu}
           />
         </div>
       </div>

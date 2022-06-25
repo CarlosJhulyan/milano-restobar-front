@@ -1,57 +1,50 @@
 import { KTCard, KTCardBody } from '../../../../_metronic/helpers'
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {Menu, MenuFetch} from "./constants";
 import {httpClient} from "../../../../api/api";
 import {ApiPath} from "../../../../api/constans";
 import {useEffect, useState} from "react";
 import {Restaurant} from "../../users/orders/constants";
 import {openNotification} from "../../../../utils/openNotification";
+import {Table} from "./constantsTable";
 
-const menuSchema = Yup.object().shape({
+const tableSchema = Yup.object().shape({
   lgt_restaurante_id_lgt_restaurante: Yup.string().required('Seleccionar restaurante'),
-  vta_descripcion_carta: Yup.string().required('Completar descripción')
+  vta_numero_mesa: Yup.string().required('Completar número de mesa')
 })
 
 type Props = {
-  currentTable: Menu,
-  getDataMenu: () => void
+  getDataTable: (id: number) => void,
+  getRestaurantsData: () => void,
+  loading: boolean,
+  restaurantDataSelector: Array<Restaurant>
 }
 
-const MenusForm = ({ currentTable, getDataMenu }: Props) => {
-  const [loading, setLoading] = useState(false)
+const TableForm = ({ getDataTable, getRestaurantsData, restaurantDataSelector, loading }: Props) => {
   const [loadingSave, setLoadingSave] = useState(false)
-  const [restaurantDataSelector, setRestaurantDataSelector] = useState<Array<Restaurant>>([])
 
-  const formik = useFormik<Menu>({
-    initialValues: currentTable,
-    validationSchema: menuSchema,
-    onSubmit: (values) => createMenu(values),
+  const formik = useFormik<Table>({
+    initialValues: {
+
+    },
+    validationSchema: tableSchema,
+    onSubmit: (values) => createTable(values),
   });
 
-  const getRestaurantsData = () => {
-    setLoading(true)
-    httpClient.get(ApiPath.Restaurants.List)
-      .then(response => {
-        setRestaurantDataSelector(response.data.data)
-        setLoading(false)
-      })
-      .catch(e => console.log(e))
-  }
-
-  const createMenu = (values: Menu) => {
+  const createTable = (values: Table) => {
     setLoadingSave(true)
-    httpClient.post(ApiPath.Menus.Create, {
+    httpClient.post(ApiPath.Table.Create, {
       codRestaurante: values.lgt_restaurante_id_lgt_restaurante,
-      descripcion: values.vta_descripcion_carta
+      numMesa: values.vta_numero_mesa
     })
       .then(response => {
         if (response.data.success)
-          openNotification('Carta', 'success', response.data.message)
+          openNotification('Mesa', 'success', response.data.message)
         else
-          openNotification('Carta', 'warning', response.data.message)
+          openNotification('Mesa', 'warning', response.data.message)
         setLoadingSave(false)
-        getDataMenu()
+        getDataTable(1)
+        formik.resetForm()
       })
       .catch(e => console.log(e)).catch()
   }
@@ -60,12 +53,13 @@ const MenusForm = ({ currentTable, getDataMenu }: Props) => {
     getRestaurantsData();
   }, [])
 
-  useEffect(() => {
-
-  }, [currentTable])
-
   return (
     <KTCard>
+      <div className='card-header border-0 pt-6'>
+        <div className='card-title'>
+          Crear nueva mesa
+        </div>
+      </div>
       <KTCardBody className='py-4'>
         <form
           onSubmit={formik.handleSubmit}
@@ -81,7 +75,7 @@ const MenusForm = ({ currentTable, getDataMenu }: Props) => {
                     className='form-select form-select-solid form-select-lg'
                     {...formik.getFieldProps('lgt_restaurante_id_lgt_restaurante')}
                   >
-                     <option value=''>Seleccionar restaurante...</option>
+                    <option value=''>Seleccionar restaurante...</option>
                     {restaurantDataSelector.map(item => (
                       <option key={item.id_lgt_restaurante} value={item.id_lgt_restaurante}>{item.lgt_nombre_resturante}</option>
                     ))}
@@ -99,16 +93,16 @@ const MenusForm = ({ currentTable, getDataMenu }: Props) => {
           <div className="row">
             <div className="col">
               <div className='row mb-6'>
-                <label className='col-lg-4 col-form-label required fw-bold fs-6'>Descripción</label>
+                <label className='col-lg-4 col-form-label required fw-bold fs-6'>Número de mesa</label>
                 <div className='col-lg-8 fv-row'>
                   <input
                     type='text'
                     className='form-control form-select-solid form-select-lg'
-                    {...formik.getFieldProps('vta_descripcion_carta')}
+                    {...formik.getFieldProps('vta_numero_mesa')}
                   />
-                  {formik.touched.vta_descripcion_carta && formik.errors.vta_descripcion_carta && (
+                  {formik.touched.vta_numero_mesa && formik.errors.vta_numero_mesa && (
                     <div className='fv-plugins-message-container'>
-                      <div className='fv-help-block'>{formik.errors.vta_descripcion_carta}</div>
+                      <div className='fv-help-block'>{formik.errors.vta_numero_mesa}</div>
                     </div>
                   )}
                 </div>
@@ -118,7 +112,7 @@ const MenusForm = ({ currentTable, getDataMenu }: Props) => {
 
           <div className='card-footer d-flex justify-content-end'>
             <button type='submit' className='btn btn-primary' disabled={loading || loadingSave}>
-              {!loadingSave && 'Guardar Menu'}
+              {!loadingSave && 'Guardar Mesa'}
               {loadingSave && (
                 <span className='indicator-progress' style={{display: 'block'}}>
                     Guardando...{' '}
@@ -133,4 +127,4 @@ const MenusForm = ({ currentTable, getDataMenu }: Props) => {
   )
 }
 
-export {MenusForm}
+export {TableForm}

@@ -57,12 +57,21 @@ export const ApiPath = {
     ChangeStatus: 'pedido/updateEstadoPedido',
     GetDetailsComplete: 'pedido/getPedidosDetallesComp',
     GetFulfilled: 'pedido/getPedidosAtendidos',
+    GetCanceled: 'pedido/getPedidosCancelados',
     GeneratePaymentForm: 'pedido/generarFormaPagoPedido'
   },
   Global: {
-    GetCoinsType: '/getFormaPago'
+    GetCoinsType: 'getFormaPago'
   },
-  Categorias: {
-    GetCategorias: 'categoria/getCategoria'
+  Categories: {
+    ListCategories: 'categoria/getListaCategorias',
+    GetCategories: 'categoria/getCategoria',
+    Create: 'categoria/createCategoria',
+  },
+  Table: {
+    Create: 'mesa/createMesa',
+    Delete: 'mesa/deleteMesa/',
+    List: 'mesa/getMesas',
+    ListByRestaurant: 'restaurante/getMesasPorRestaurante'
   }
 }
